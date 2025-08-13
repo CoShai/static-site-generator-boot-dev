@@ -1,30 +1,37 @@
-from textnode import TextNode,TextType
-from htmlnode import LeafNode
 from generatepage import generate_pages_recursive
 import os,shutil
+import sys
+
+
+public_dir='./docs/'
+template_dir='template.html'
+source_dir=source=os.path.abspath('./static')
+target_dir=os.path.abspath(public_dir)
+content_dir='./content/'
+
 
 
 def main():
-    create_public()
-    source=os.path.abspath('./static')
-    target=os.path.abspath('./public')
-    copy_recursive(source,target)
+    basepath='/'
+    if len(sys.argv)>1:
+        basepath=sys.argv[1]
     
-    generate_pages_recursive('./content/','template.html','./public/')
+    create_public()    
+    copy_recursive(source_dir,target_dir)
+    generate_pages_recursive(content_dir,template_dir,public_dir,basepath)
     
 
 def create_public():
-    if os.path.exists('./public'):    
-        shutil.rmtree('./public')
-        os.mkdir('./public')
-        print("Created public folder")
+    if os.path.exists(public_dir):    
+        shutil.rmtree(public_dir)
+        os.mkdir(public_dir)
+        print("Created public directory")
     else:
-        os.mkdir('./public')
-        print("Created public folder")
+        os.mkdir(public_dir)
+        print("Created public directory")
 
 def copy_recursive(source,target):
     paths=os.listdir(source)
-    print(paths)
     for name in paths:
         path=os.path.join(source,name)
         if os.path.isdir(path):
@@ -34,14 +41,7 @@ def copy_recursive(source,target):
             os.mkdir(new_target)
             copy_recursive(new_path,new_target)
         else:
-            print(f"copying file: {path} to {target}")
+            print(f"Copying file: {path} to {target}")
             shutil.copy(path,target)
         
-
-
-        
-
-
-
-
 main()
